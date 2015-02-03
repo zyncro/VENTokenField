@@ -29,7 +29,7 @@
 static const CGFloat VENTokenFieldDefaultVerticalInset      = 7.0;
 static const CGFloat VENTokenFieldDefaultHorizontalInset    = 15.0;
 static const CGFloat VENTokenFieldDefaultToLabelPadding     = 5.0;
-static const CGFloat VENTokenFieldDefaultTokenPadding       = 2.0;
+static const CGFloat VENTokenFieldDefaultTokenPadding       = 6.0;
 static const CGFloat VENTokenFieldDefaultMinInputWidth      = 80.0;
 static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 
@@ -80,7 +80,6 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 {
     // Set up default values.
     _autocorrectionType = UITextAutocorrectionTypeNo;
-    _autocapitalizationType = UITextAutocapitalizationTypeSentences;
     self.maxHeight = VENTokenFieldDefaultMaxHeight;
     self.verticalInset = VENTokenFieldDefaultVerticalInset;
     self.horizontalInset = VENTokenFieldDefaultHorizontalInset;
@@ -116,11 +115,6 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 {
     _placeholderText = placeholderText;
     self.inputTextField.placeholder = _placeholderText;
-}
-
--(void)setInputTextFieldAccessibilityLabel:(NSString *)inputTextFieldAccessibilityLabel {
-    _inputTextFieldAccessibilityLabel = inputTextFieldAccessibilityLabel;
-    self.inputTextField.accessibilityLabel = _inputTextFieldAccessibilityLabel;
 }
 
 - (void)setInputTextFieldTextColor:(UIColor *)inputTextFieldTextColor
@@ -294,7 +288,8 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
             [weakSelf didTapToken:weakToken];
         };
 
-        [token setTitleText:[NSString stringWithFormat:@"%@,", title]];
+        //[token setTitleText:[NSString stringWithFormat:@"%@,", title]];
+        [token setTitleText:[NSString stringWithFormat:@"%@", title]];
         [self.tokens addObject:token];
 
         if (*currentX + token.width <= self.scrollView.contentSize.width) { // token fits in current line
@@ -325,7 +320,6 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 {
     self.invisibleTextField = [[VENBackspaceTextField alloc] initWithFrame:CGRectZero];
     [self.invisibleTextField setAutocorrectionType:self.autocorrectionType];
-    [self.invisibleTextField setAutocapitalizationType:self.autocapitalizationType];
     self.invisibleTextField.delegate = self;
     [self addSubview:self.invisibleTextField];
 }
@@ -382,19 +376,17 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
         [_inputTextField setKeyboardType:self.inputTextFieldKeyboardType];
         _inputTextField.textColor = self.inputTextFieldTextColor;
         _inputTextField.font = [UIFont fontWithName:@"HelveticaNeue" size:15.5];
+        _inputTextField.accessibilityLabel = NSLocalizedString(@"To", nil);
         _inputTextField.autocorrectionType = self.autocorrectionType;
-        _inputTextField.autocapitalizationType = self.autocapitalizationType;
         _inputTextField.tintColor = self.colorScheme;
         _inputTextField.delegate = self;
         _inputTextField.placeholder = self.placeholderText;
-        _inputTextField.accessibilityLabel = self.inputTextFieldAccessibilityLabel ?: NSLocalizedString(@"To", nil);
         [_inputTextField addTarget:self action:@selector(inputTextFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     }
     return _inputTextField;
 }
 
-- (void)setAutocorrectionType:(UITextAutocorrectionType)autocorrectionType
-{
+- (void)setAutocorrectionType:(UITextAutocorrectionType)autocorrectionType {
     _autocorrectionType = autocorrectionType;
     [self.inputTextField setAutocorrectionType:self.autocorrectionType];
     [self.invisibleTextField setAutocorrectionType:self.autocorrectionType];
@@ -404,13 +396,6 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 {
     _inputTextFieldKeyboardType = inputTextFieldKeyboardType;
     [self.inputTextField setKeyboardType:self.inputTextFieldKeyboardType];
-}
-
-- (void)setAutocapitalizationType:(UITextAutocapitalizationType)autocapitalizationType
-{
-    _autocapitalizationType = autocapitalizationType;
-    [self.inputTextField setAutocapitalizationType:self.autocapitalizationType];
-    [self.invisibleTextField setAutocapitalizationType:self.autocapitalizationType];
 }
 
 - (void)inputTextFieldDidChange:(UITextField *)textField
